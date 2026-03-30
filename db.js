@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://ARFIND:IJATXnuj2YfRtGgD@cluster0.qaws9gp.mongodb.net/ARFIND';
+const MONGODB_URI = process.env.DB_URI;
 
 mongoose.connect(MONGODB_URI)
 .then(() => console.log('MongoDB conectado'))
