@@ -138,9 +138,11 @@ app.post('/login', async (req, res) => {
 
     return res.status(401).json({ message: 'Código incorrecto' });
 
-  } catch (err) {
-    res.status(500).json({ message: 'Error en login' });
-  }
+ } catch (err) {
+  console.error("ERROR LOGIN:", err);
+  res.status(500).json({ message: 'Error en login' });
+}
+
 });
 
 /* ============================= */
