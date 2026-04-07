@@ -8,10 +8,10 @@ require('./db');
 const Usuario = require('./models/Usuario');
 const Inventario = require('./models/Inventario');
 const Movimiento = require('./models/Movimiento');
-const app = express(); // ✅ primero creas app
+const app = express(); 
 
 app.use(cors());
-app.use(express.json()); // ✅ luego activas json middleware
+app.use(express.json());
 
 /* ============================= */
 /* ADMINISTRACIÓN */
@@ -28,7 +28,7 @@ app.post('/registrar', async (req, res) => {
       return res.status(409).json({ message: 'Usuario ya existe' });
     }
 
-    // 🔐 generar código automático de 6 dígitos
+    // Generar y guardar código automático de 6 dígitos
     const codigoPlano = Math.floor(100000 + Math.random() * 900000).toString();
 
     const codigoHash = await bcrypt.hash(codigoPlano, SALT_ROUNDS);
@@ -41,7 +41,7 @@ app.post('/registrar', async (req, res) => {
 
     await usuario.save();
 
-    // ⚠️ enviar el código solo una vez
+    // Enviar el código solo una vez
     res.json({
       message: 'Usuario registrado',
       codigo: codigoPlano
@@ -146,7 +146,6 @@ app.post('/login', async (req, res) => {
 /* ============================= */
 /* INVENTARIO */
 /* ============================= */
-
 app.post('/inventario', async (req, res) => {
   try {
     const { tipo, series, codigoBarras } = req.body;
@@ -159,25 +158,19 @@ app.post('/inventario', async (req, res) => {
         return res.json(existente);
       }
     }
-
     let ultimo = await Inventario.findOne().sort({ createdAt: -1 });
-
     let nuevoNumero = 1;
-
     if (ultimo && ultimo.numeroInventario) {
       const numero = parseInt(ultimo.numeroInventario.split('-')[1]);
       nuevoNumero = numero + 1;
     }
-
     const prefijo = req.body.categoria === 'Limpieza' ? 'LIM' : 'MAN';
-
     if ((tipo === 'Equipo' || tipo === 'Herramienta') && Array.isArray(series) && series.length > 0) {
       const creados = [];
       for (let s of series) {
         if (!s) continue;
         const folio = `${prefijo}-${String(nuevoNumero).padStart(5, '0')}`;
         nuevoNumero++;
-        
         const nuevo = new Inventario({
           ...req.body,
           cantidad: 1,
@@ -375,7 +368,7 @@ app.post('/confirmar-devolucion', async (req, res) => {
   }
 });
 
-/* Devoluciones (legacy u otros usos) */
+/* Devoluciones */
 app.post('/devoluciones', async (req, res) => {
   try {
     const { usuarioId, productos, movimientoId } = req.body;
